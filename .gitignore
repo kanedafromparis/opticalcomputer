@@ -2,3 +2,7 @@ __pycache__/
 *.swp
 .env/
 .venv/
+checklist/neopixel/bin/*
+checklist/neopixel/lib/*
+checklist/neopixel/lib64
+checklist/neopixel/pyvenv.cfg
