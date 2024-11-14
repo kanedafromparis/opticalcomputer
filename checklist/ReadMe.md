@@ -16,6 +16,24 @@ python -m venv ${project}/checklist/neopixel
 sudo ./bin/python3 main.py
 ```
 
+### Camera
+
+to take image manually
+
+```bash
+rpicam-still -o tmp-$(date +%y%m%d%H%M%S).png \
+   --height 480 --width 640 --shutter 100000 \
+   --gain 1 --immediate --nopreview \
+   --awbgains 1,1
+```
+
+set you virtual env in `checklist/camera`
+
+```bash
+sudo apt update && sudo apt install python3-picamzero -y
+python -m venv --system-site-packages ${project}/checklist/camera
+./bin/pip3 install -r requirements.txt
+sudo ./bin/python3 main.py
 ```
 
 ### Screen
