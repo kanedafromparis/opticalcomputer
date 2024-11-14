@@ -6,3 +6,11 @@ checklist/neopixel/bin/*
 checklist/neopixel/lib/*
 checklist/neopixel/lib64
 checklist/neopixel/pyvenv.cfg
+checklist/camera/bin/*
+checklist/camera/lib/*
+checklist/camera/lib64
+checklist/camera/pyvenv.cfg
+checklist/screen/bin/*
+checklist/screen/lib/*
+checklist/screen/lib64
+checklist/screen/pyvenv.cfg
