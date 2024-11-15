@@ -1,0 +1,10 @@
+RPi.GPIO==0.7.1
+adafruit-circuitpython-neopixel==6.3.11
+board==1.0
+gpio==1.0.0
+numpy==2.0.1
+picamera2==0.3.21
+picamzero==1.0.1
+pillow==10.4.0
+rpi-ws281x==5.0.0
+spidev==3.6

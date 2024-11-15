@@ -8,6 +8,7 @@ This folder host autonomous python project that you can use in order to validate
 
 ### LED Matrice
 
+This will turn on led
 set you virtual env in `checklist/neopixel`
 
 ```bash
@@ -28,9 +29,13 @@ rpicam-still -o tmp-$(date +%y%m%d%H%M%S).png \
 ```
 
 set you virtual env in `checklist/camera`
+to take images automatically
 
 ```bash
 sudo apt update && sudo apt install python3-picamzero -y
+```
+
+```bash
 python -m venv --system-site-packages ${project}/checklist/camera
 ./bin/pip3 install -r requirements.txt
 sudo ./bin/python3 main.py
@@ -45,4 +50,18 @@ set you virtual env in `checklist/screen`
 python -m venv ${project}/checklist/screen
 ./bin/pip3 install -r requirements.txt
 ./bin/python3 main.py
+```
+
+### Init Set up
+
+this will run a sequence of led, screen and images
+
+```bash
+sudo apt update && sudo apt install python3-picamzero -y
+```
+
+```bash
+python -m venv ${project}/checklist/sbys
+./bin/pip3 install -r requirements.txt
+sudo ./bin/python3 main.py
 ```
