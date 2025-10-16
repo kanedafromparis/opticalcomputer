@@ -1,0 +1,6 @@
+board==1.0
+gpio==1.0.0
+numpy==2.0.1
+pillow==10.4.0
+RPi.GPIO==0.7.1
+spidev==3.6
