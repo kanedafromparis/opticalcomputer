@@ -1,3 +1,4 @@
+import os
 from PIL import Image, ImageDraw 
 import RPi.GPIO as GPIO
 from spidev import SpiDev
@@ -13,7 +14,6 @@ from picamzero import Camera
 import datetime
 # from calculator.Calculator import Calculator
 
-
 class LCD_Controller:
     def __init__(self, spi:SpiDev)->None:
         self.lcd_size = (480, 320)
@@ -26,7 +26,7 @@ class LCD_Controller:
         print(f'Initialized display with landscape mode = {self.lcd.is_landscape()} and dimensions {self.lcd.dimensions()}')
         
     def generate_grid(self, rgb_color: tuple) -> Image:
-        white_color=(200,200,200)
+        white_color=(255,255,255)
         img = Image.new('RGB', self.lcd_size, white_color)
         # Split the image into a grid
         for x in range(0, self.lcd_size[0], int(self.lcd_size[0] / 10)):
@@ -38,6 +38,17 @@ class LCD_Controller:
             img1 = ImageDraw.Draw(img)   
             shape = [(0, y), (self.lcd_size[0], y)]
             img1.line(shape, fill =rgb_color, width = 5)        
+
+        return img
+
+    def generate_lane(self, rgb_color: tuple, nb_lines: 1) -> Image:
+        black_color=(0,0,0)
+        white_color=(255,255,255)
+        img = Image.new('RGB', self.lcd_size, white_color)
+        
+        img1 = ImageDraw.Draw(img)
+        shape = [(0, 0+nb_lines), (self.lcd_size[0], 0)]
+        img1.line(shape, fill=rgb_color, width=50)        
 
         return img
 
@@ -58,8 +69,14 @@ class LCD_Controller:
         
 if __name__ == '__main__':
     try:
+        x = datetime.datetime.now()
+        timeslot = x.strftime("%Y-%m-%d-%H-%M-%S-%f")
+        newpath = r''+os.getcwd()+'/'+timeslot
+        if not (os.path.exists(newpath)):
+            os.makedirs(newpath)
+
         # cal = Calculator()
-        powerled=(2,0,0)
+        powerled=(0,0,2)
         cam = Camera()
         GPIO.setmode(GPIO.BCM)
         pixels = neopixel.NeoPixel(board.D18, 64)
@@ -67,6 +84,9 @@ if __name__ == '__main__':
         # fill with red led then take a snashot
         # cal.fill_in_square(pixels)
         pixels.fill( (0, 0, 0))
+        spi_lcd_1 = SpiDev(config.SPI_BUS, config.SPI_DEVICE)
+        lcd_control_1 = LCD_Controller(spi=spi_lcd_1)
+
         sleep(0.05)
         pixels.show()
         for item in range(0, 64, 1):
@@ -74,9 +94,33 @@ if __name__ == '__main__':
             pixels[item]=powerled        
             pixels.show()
         # cal.save_picture(cam)
-        x = datetime.datetime.now()
-        cam.take_photo(x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
-        print("square")
+        full_image = cam.take_photo(newpath+"/square-full-"+str(item)+"-"+x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
+
+        im = Image.open(r""+full_image)
+        px = im.load()
+        print("square : "+full_image)
+        cols,rows = im._size
+
+        for item in range(5,10):
+            black_color=(0,0,0)
+            lcd_control_1.display_img(
+                lcd_control_1.generate_lane(rgb_color=black_color, nb_lines=item)
+            )
+            cam.take_photo(newpath+"/square-black-"+str(item)+"-"+x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
+        print("row")
+        sleep(0.05)
+        print (px[4, 4])
+        print (px[290, 1096])
+        # for i in range(rows):
+        #     print("--------------------------------")
+        #     print("row : ", end='')
+        #     print(i)
+        #     print("[")
+        #     for j in range(cols):
+        #         print(" : ", end='')
+        #         print(j, end='')
+        #     print("]")
+
         sleep(0.05)
 
         # fill first and last row red led then take a snashot
@@ -94,7 +138,29 @@ if __name__ == '__main__':
             pixels.show()
         # cal.save_picture(cam)
         x = datetime.datetime.now()
-        cam.take_photo(x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
+        white_color=(255,255,255)
+        lcd_control_1.display_img(
+            lcd_control_1.generate_grid(white_color)
+        )
+        cam.take_photo(newpath+"/barre-white-"+x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
+        blue_color=(0,0,255)
+        lcd_control_1.display_img(
+            lcd_control_1.generate_grid(blue_color)
+        )
+        cam.take_photo(newpath+"/barre-blue-"+x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
+
+        green_color=(0,255,0)
+        lcd_control_1.display_img(
+            lcd_control_1.generate_grid(green_color)
+        )
+        cam.take_photo(newpath+"/barre-green-"+x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
+
+        for item in range(5,10):
+            black_color=(0,0,0)
+            lcd_control_1.display_img(
+                lcd_control_1.generate_lane(rgb_color=black_color, nb_lines=item)
+            )
+            cam.take_photo(newpath+"/barre-black-"+str(item)+"-"+x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
         print("row")
         sleep(0.05)
 
@@ -110,20 +176,18 @@ if __name__ == '__main__':
         # cal.save_picture(cam)
         
         
-        spi_lcd_1 = SpiDev(config.SPI_BUS, config.SPI_DEVICE)
-        lcd_control_1 = LCD_Controller(spi=spi_lcd_1)
         blue_color=(0, 0, 255)
         lcd_control_1.display_img(
             lcd_control_1.generate_grid(blue_color)
         )
         x = datetime.datetime.now()
-        cam.take_photo(x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
+        image = cam.take_photo(newpath+"/"+x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
         sleep(10)
         lcd_control_1.display_img(
             lcd_control_1.generate_pitchblack()
         )
         x = datetime.datetime.now()
-        cam.take_photo(x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
+        cam.take_photo(newpath+"/"+x.strftime("%Y-%m-%d-%H-%M-%S-%f"))
         
         sleep(10)
     except KeyboardInterrupt:

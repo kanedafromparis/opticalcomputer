@@ -9,11 +9,11 @@ def fill_in_square(pixels):
     pixels.show()
     for item in range(0, 64, 1):
         led = item
-        print(item)
         pixels[item]=(0,5,0)
-        sleep(1.00)
-        print("change led0")
+        print("change led ", item)
         pixels.show()
+        sleep(1.00)
+        
 
 # This function lihght up the led board in green on by one with a pace of 0.05 sec
 def fill_led_with_calib_light(pixels):
@@ -31,7 +31,7 @@ def fill_led_with_calib_light(pixels):
     sleep(5.00)
 
 if __name__ == "__main__":
-    pixels = neopixel.NeoPixel(board.D18, 64)
+    pixels = neopixel.NeoPixel(board.D18, 64, brightness = 1)
     print("init")
     pixels.fill( (0, 0, 0))
     display = input("select display [0,1] : ")
